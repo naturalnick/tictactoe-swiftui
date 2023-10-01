@@ -10,12 +10,12 @@ import SwiftUI
 struct StatusLabel: View {
     
     var winner: String?
-    var isHumanTurn: Bool
+    var isTurnX: Bool
     
     var statusText: String {
         guard let winner = winner else {
             
-            return isHumanTurn ? "X's Turn" : "O's Turn"
+            return isTurnX ? "X's Turn" : "O's Turn"
         }
         
         return winner == "" ? "Draw!" : "\(winner.uppercased()) Wins!"
@@ -29,7 +29,7 @@ struct StatusLabel: View {
 
 struct StatusLabel_Previews: PreviewProvider {
     static var previews: some View {
-        StatusLabel(isHumanTurn: true)
-        StatusLabel(winner: "o", isHumanTurn: true)
+        StatusLabel(isTurnX: true)
+        StatusLabel(winner: "o", isTurnX: true)
     }
 }
