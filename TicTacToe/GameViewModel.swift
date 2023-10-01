@@ -7,23 +7,25 @@
 
 import SwiftUI
 
-final class TicTacToeViewModel: ObservableObject {
+final class GameViewModel: ObservableObject {
     let columns: [GridItem] = [GridItem(.flexible()),
                                GridItem(.flexible()),
                                GridItem(.flexible())]
     
     @Published var moves: [String?] = Array(repeating: nil, count: 9)
-    @Published var isHumanTurn = true
+    @Published var isTurnX = true
     @Published var winner: String?
+    @Published var multiplayerModeOn = false
     
     func handlePlayerMove(moveIndex: Int) {
-        if !isHumanTurn || moves[moveIndex] != nil { return }
+        if moves[moveIndex] != nil { return }
         
-        isHumanTurn.toggle()
-        moves[moveIndex] = "x"
+        if !multiplayerModeOn && !isTurnX { return }
+        
+        moves[moveIndex] = isTurnX ? "x" : "o"
         
         if checkForWin(in: moves) {
-            winner = "x"
+            winner = isTurnX ? "x" : "o"
             return
         }
         
@@ -31,6 +33,9 @@ final class TicTacToeViewModel: ObservableObject {
             winner = ""
             return
         }
+        
+        isTurnX.toggle()
+        if multiplayerModeOn { return }
         
         // handle computer move after delay
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [self] in
@@ -46,14 +51,20 @@ final class TicTacToeViewModel: ObservableObject {
                 winner = ""
                 return
             }
-            isHumanTurn.toggle()
+            isTurnX.toggle()
         }
     }
     
     func resetGame() {
         winner = nil
         moves = Array(repeating: nil, count: 9)
-        isHumanTurn = true
+        isTurnX = true
+        print("reset")
+    }
+    
+    func toggleMultiplayerMode() {
+        multiplayerModeOn = !multiplayerModeOn
+        resetGame()
     }
     
     func determineComputerMove(in moves: [String?]) -> Int {
