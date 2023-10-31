@@ -7,55 +7,44 @@
 
 import SwiftUI
 
-struct TicTacToolbar: ToolbarContent {
+struct TicTacToolbar: View {
     var multiplayerModeOn: Bool
     var toggleMultiplayerMode: () -> Void
     var resetGame: () -> Void
     
-    var body: some ToolbarContent {
-        PlayerButton(toggleMultiplayerMode: toggleMultiplayerMode, multiplayerModeOn: multiplayerModeOn)
-        Title()
-        ResetButton(resetGame: resetGame)
-    }
-}
-
-struct Title: ToolbarContent {
-    var body: some ToolbarContent {
-        ToolbarItem(placement: .principal) {
-            Text("Tic Tac Toe")
-                .font(.system(size: 30, weight: .black, design: .serif))
-        }
-    }
-}
-
-struct ResetButton: ToolbarContent {
-    var resetGame: () -> Void
-    
-    var body: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button(action: resetGame) {
-                Label("Reset", systemImage: "arrow.counterclockwise")
+    var body: some View {
+        VStack {
+            HStack {
+                Button(action: toggleMultiplayerMode) {
+                    Label("2_Player", systemImage: multiplayerModeOn ? "person.2.fill" : "person.fill")
+                }
+                .labelStyle(.iconOnly)
+                .foregroundColor(.primary)
+                .font(.system(size: 24))
+                .frame(width: 50)
+                
+                Spacer()
+                
+                Text("Tic Tac Toe")
+                    .font(.custom("Futura-Bold", size: 24))
+                
+                Spacer()
+                
+                Button(action: resetGame) {
+                    Label("Reset", systemImage: "arrow.counterclockwise")
+                }
+                .labelStyle(.iconOnly)
+                .foregroundColor(.primary)
+                .font(.system(size: 24, weight: .black))
+                .frame(width: 50)
             }
-            .labelStyle(.iconOnly)
-            .foregroundColor(.gray)
-            .font(.system(size: 24, weight: .black))
+            .shadow(radius: 40)
+            .padding()
+            
+            LinearGradient(colors: [Color(.sRGB, white: 0.85, opacity: 1), Color(.sRGB, white: 0.95, opacity: 1)], startPoint: .top, endPoint: .bottom)
+                   .frame(height: 10)
+                   .opacity(0.8)
         }
-    }
-}
-
-struct PlayerButton: ToolbarContent {
-    var toggleMultiplayerMode: () -> Void
-    var multiplayerModeOn: Bool
-    
-    var body: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarLeading) {
-            Button(action: toggleMultiplayerMode) {
-                Label("2_Player", systemImage: multiplayerModeOn ? "person.2.fill" : "person.fill")
-            }
-            .labelStyle(.iconOnly)
-            .foregroundColor(.gray)
-            .font(.system(size: 24))
-            .badge(2)
-        }
+        .background(.white)
     }
 }

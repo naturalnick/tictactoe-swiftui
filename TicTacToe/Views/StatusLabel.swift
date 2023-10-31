@@ -23,7 +23,14 @@ struct StatusLabel: View {
     
     var body: some View {
         Text(statusText)
-            .font(.system(size: 60, weight: .black, design: .serif))
+            .font(.custom("Futura-Bold", size: 24))
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.white)
+            .cornerRadius(10)
+            .shadow(color: Color(.sRGB, white: 0.85, opacity: 1), radius: 8)
+            .padding(.horizontal)
+            .padding(.bottom)
     }
 }
 
