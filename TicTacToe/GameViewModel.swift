@@ -16,6 +16,25 @@ final class GameViewModel: ObservableObject {
     @Published var isTurnX = true
     @Published var winner: String?
     @Published var multiplayerModeOn = false
+    @Published var xScore: Int = 0
+    @Published var oScore: Int = 0
+    @Published var isResetButtonVisible = false
+    @Published var showMultiPlayerMemo = false {
+        didSet {
+            if self.showMultiPlayerMemo == true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+                    self.showMultiPlayerMemo = false
+                }
+            }
+        }
+    }
+    
+    var roundStarted: Bool {
+        return xScore + oScore > 0
+    }
+    var gameStarted: Bool {
+        moves.contains { $0 != nil }
+    }
     
     func handlePlayerMove(moveIndex: Int) {
         if moves[moveIndex] != nil { return }
@@ -26,6 +45,8 @@ final class GameViewModel: ObservableObject {
         
         if checkForWin(in: moves) {
             winner = isTurnX ? "x" : "o"
+            if isTurnX { xScore += 1 }
+            else { oScore += 1 }
             return
         }
         
@@ -44,6 +65,7 @@ final class GameViewModel: ObservableObject {
             
             if checkForWin(in: moves) {
                 winner = "o"
+                oScore += 1
                 return
             }
             
@@ -59,11 +81,11 @@ final class GameViewModel: ObservableObject {
         winner = nil
         moves = Array(repeating: nil, count: 9)
         isTurnX = true
-        print("reset")
     }
     
     func toggleMultiplayerMode() {
         multiplayerModeOn = !multiplayerModeOn
+        showMultiPlayerMemo = true
         resetGame()
     }
     

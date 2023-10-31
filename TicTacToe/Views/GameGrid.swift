@@ -12,15 +12,15 @@ struct GameGrid: View {
     var moves: [String?]
     var handlePlayerMove: (Int) -> Void
     var winner: String?
-    var proxy: GeometryProxy
+    var geometry: GeometryProxy
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 0) {
             ForEach(0..<9) { i in
-                GameSpace(spaceIndex: i, proxy: proxy, handlePlayerMove: handlePlayerMove, moves: moves)
+                GameSpace(spaceIndex: i, proxy: geometry, handlePlayerMove: handlePlayerMove, moves: moves)
             }
-            
         }
         .disabled(winner != nil)
+        .padding(.horizontal, 10)
     }
 }
