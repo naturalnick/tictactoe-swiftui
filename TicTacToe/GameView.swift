@@ -36,6 +36,8 @@ struct GameView: View {
                 
                 GameGrid(columns: viewModel.columns, moves: viewModel.moves, handlePlayerMove: viewModel.handlePlayerMove, winner: viewModel.winner, geometry: geometry)
                 
+                Spacer()
+                
                 if let winner = viewModel.winner {
                     let result = winner == "" ? "Draw!" : "\(winner.uppercased()) Wins!"
                     Button {
@@ -47,16 +49,25 @@ struct GameView: View {
                             .padding()
                     }
                     .buttonStyle(.borderedProminent)
-                    .opacity(viewModel.isResetButtonVisible ? 1 : 0)
-                    .padding()
+                    .padding(.horizontal)
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(Int(0.5))) {
-                            withAnimation(.spring) {
-                                viewModel.isResetButtonVisible = true
-                            }
+                        withAnimation(.spring) {
+                            viewModel.isResetButtonVisible = true
+                        }
+                    }
+                    .onDisappear() {
+                        withAnimation(.easeOut) {
+                            viewModel.isResetButtonVisible = false
                         }
                     }
                     .scaleEffect(viewModel.isResetButtonVisible ? 1 : 0, anchor: .bottom)
+                } else if !viewModel.isResetButtonVisible {
+                    withAnimation(.easeInOut) {
+                        Text("Get 3 in a row to win!")
+                            .font(.system(size: 21, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .padding()
+                    }
                 }
                 
                 Spacer()
