@@ -23,18 +23,25 @@ struct GameView: View {
                     }
                     ZStack {
                         Circle()
-                            .stroke(.gray, lineWidth: 5)
+                            .stroke(.gray, lineWidth: 3)
                             .background(Circle().fill(.white))
                             .frame(width: 50)
                             .shadow(color: Color(.sRGB, white: 0.75, opacity: 1), radius: 5)
                         
                         Text("VS")
                             .font(.custom("Futura-Bold", size: 20))
+                        
+                        if viewModel.gameStarted {
+                            ConfettiView(score: $viewModel.xScore)
+                                .offset(x: -(geometry.size.width / 2 / 2), y: 70)
+                            ConfettiView(score: $viewModel.oScore)
+                                .offset(x: geometry.size.width / 2 / 2 , y: 70)
+                        }
                     }
                 }
                 .padding()
                 
-                GameGrid(columns: viewModel.columns, moves: viewModel.moves, handlePlayerMove: viewModel.handlePlayerMove, winner: viewModel.winner, geometry: geometry)
+                GameGrid(columns: viewModel.columns, moves: viewModel.moves, handlePlayerMove: viewModel.handlePlayerMove, winner: viewModel.winner, screenWidth: geometry.size.width)
                 
                 Spacer()
                 
@@ -72,9 +79,17 @@ struct GameView: View {
                 
                 Spacer()
             }
-            
             .background(Color(.sRGB, white: 0.95, opacity: 1))
         }
+    }
+}
+
+struct ConfettiView: View {
+    @Binding var score: Int
+    
+    var body: some View {
+        EmptyView()
+            .confettiCannon(counter: $score, confettiSize: 18)
     }
 }
 

@@ -11,40 +11,62 @@ struct TicTacToolbar: View {
     var multiplayerModeOn: Bool
     var toggleMultiplayerMode: () -> Void
     var resetGame: () -> Void
+    var score: Int = 0
+    
+    @State var selectedGameType: GameType = GameType.classic
     
     var body: some View {
-        VStack {
+        VStack(spacing: 2) {
             HStack {
-                Button(action: toggleMultiplayerMode) {
-                    Label("2_Player", systemImage: multiplayerModeOn ? "person.2.fill" : "person.fill")
+                Button {
+                    toggleMultiplayerMode()
+                } label: {
+                    Image(systemName: multiplayerModeOn ? "person.2.fill" : "person.fill")
+                        .foregroundStyle(.black)
+                        .font(.system(size: 26))
+                        .frame(width: 60, height: 60)
                 }
-                .labelStyle(.iconOnly)
-                .foregroundColor(.primary)
-                .font(.system(size: 24))
-                .frame(width: 50)
+                .padding(.leading)
+                
+                Spacer()
+                Menu {
+                    Picker("Tic Tac Toe Variants", selection: $selectedGameType) {
+                        ForEach(GameType.allCases) { type in
+                            Text(type.rawValue.capitalized)
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(selectedGameType.rawValue.capitalized)
+                        Image(systemName: "chevron.up.chevron.down")
+                    }
+                    .foregroundStyle(.black)
+                    .font(.system(size: 21, weight: .semibold))
+                }
                 
                 Spacer()
                 
-                Text("Tic Tac Toe")
-                    .font(.custom("Futura-Bold", size: 24))
-                
-                Spacer()
-                
-                Button(action: resetGame) {
-                    Label("Reset", systemImage: "arrow.counterclockwise")
+                Button {
+                    resetGame()
+                } label: {
+                    Image(systemName: "arrow.counterclockwise")
+                        .foregroundStyle(.black)
+                        .font(.system(size: 24, weight: .black))
+                        .frame(width: 60, height: 60)
                 }
-                .labelStyle(.iconOnly)
-                .foregroundColor(.primary)
-                .font(.system(size: 24, weight: .black))
-                .frame(width: 50)
+                .padding(.trailing)
             }
-            .shadow(radius: 40)
-            .padding()
-            
-            LinearGradient(colors: [Color(.sRGB, white: 0.85, opacity: 1), Color(.sRGB, white: 0.95, opacity: 1)], startPoint: .top, endPoint: .bottom)
-                   .frame(height: 10)
-                   .opacity(0.8)
         }
         .background(.white)
+        .shadow(color: Color.gray.opacity(0.3), radius: 5, x: 0, y: 5)
     }
+}
+
+enum GameType: String, CaseIterable, Identifiable {
+    case classic, reverse
+    var id: Self { self }
+}
+
+#Preview {
+    TicTacToolbar(multiplayerModeOn: false, toggleMultiplayerMode: { print("hello") }, resetGame: { print("hello") }, score: 1)
 }

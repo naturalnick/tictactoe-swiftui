@@ -9,12 +9,12 @@ import SwiftUI
 
 struct GameSpace: View {
     var spaceIndex: Int
-    var proxy: GeometryProxy
+    var screenWidth: CGFloat
     var handlePlayerMove: (Int) -> Void
     var moves: [String?]
     
     var spaceWidth: CGFloat {
-        return (proxy.size.width - 20) / 3
+        return (screenWidth - 20) / 3
     }
     
     var body: some View {
@@ -29,7 +29,7 @@ struct GameSpace: View {
             }
                 .buttonStyle(ScaleButtonStyle())
             
-            MoveIndicator(player: moves[spaceIndex], proxy: proxy)
+            MoveIndicator(player: moves[spaceIndex], screenWidth: screenWidth)
         }
         .frame(width: spaceWidth,
                height: spaceWidth)
@@ -38,12 +38,12 @@ struct GameSpace: View {
 
 struct MoveIndicator: View {
     var player: String?
-    var proxy: GeometryProxy
+    var screenWidth: CGFloat
     
     var body: some View {
         if let player {
             Text(player.uppercased())
-                .font(.custom("Futura-Bold", size: proxy.size.width/3/2))
+                .font(.custom("Futura-Bold", size: screenWidth/3/2))
                 .animation(.easeIn, value: player)
         }
     }
