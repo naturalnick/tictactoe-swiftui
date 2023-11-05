@@ -29,6 +29,8 @@ final class GameViewModel: ObservableObject {
         }
     }
     
+    var scoreTotal: Int { xScore + oScore }
+    
     var roundStarted: Bool {
         return xScore + oScore > 0
     }
@@ -61,6 +63,9 @@ final class GameViewModel: ObservableObject {
         // handle computer move after delay
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [self] in
             let computerMove = determineComputerMove(in: moves)
+            
+            if (isTurnX) { return }
+            
             moves[computerMove] = "o"
             
             if checkForWin(in: moves) {
@@ -78,6 +83,11 @@ final class GameViewModel: ObservableObject {
     }
     
     func resetGame() {
+        if (!gameStarted && roundStarted) {
+            xScore = 0
+            oScore = 0
+        }
+        
         winner = nil
         moves = Array(repeating: nil, count: 9)
         isTurnX = true
