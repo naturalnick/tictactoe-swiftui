@@ -8,10 +8,6 @@
 import SwiftUI
 
 final class GameViewModel: ObservableObject {
-    let columns: [GridItem] = [GridItem(.flexible()),
-                               GridItem(.flexible()),
-                               GridItem(.flexible())]
-    
     @Published var moves: [String?] = Array(repeating: nil, count: 9)
     @Published var isTurnX = true
     @Published var winner: String?
@@ -19,6 +15,7 @@ final class GameViewModel: ObservableObject {
     @Published var xScore: Int = 0
     @Published var oScore: Int = 0
     @Published var isResetButtonVisible = false
+    @Published var selectedGameType: GameType = GameType.classic
     @Published var showMultiPlayerMemo = false {
         didSet {
             if self.showMultiPlayerMemo == true {
@@ -45,41 +42,51 @@ final class GameViewModel: ObservableObject {
         
         moves[moveIndex] = isTurnX ? "x" : "o"
         
-        if checkForWin(in: moves) {
-            winner = isTurnX ? "x" : "o"
-            if isTurnX { xScore += 1 }
-            else { oScore += 1 }
+        if let newWinner = findWinner(in: moves, with: selectedGameType) {
+            winner = newWinner
+            if winner == "x" { xScore += 1 }
+            else if winner == "o" { oScore += 1 }
             return
         }
         
-        if checkGridFilled(in: moves) {
+        if checkForDraw(in: moves) {
             winner = ""
             return
         }
         
         isTurnX.toggle()
-        if multiplayerModeOn { return }
         
-        // handle computer move after delay
+        if !multiplayerModeOn {  handleComputerMove() }
+    }
+    
+    func handleComputerMove() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [self] in
-            let computerMove = determineComputerMove(in: moves)
+            let computerMove = determineComputerMove(in: moves, with: selectedGameType)
             
             if (isTurnX) { return }
             
             moves[computerMove] = "o"
             
-            if checkForWin(in: moves) {
-                winner = "o"
-                oScore += 1
+            if let newWinner = findWinner(in: moves, with: selectedGameType) {
+                winner = newWinner
+                if winner == "x" { xScore += 1 }
+                else if winner == "o" { oScore += 1 }
                 return
             }
             
-            if checkGridFilled(in: moves) {
+            if checkForDraw(in: moves) {
                 winner = ""
                 return
             }
+            
             isTurnX.toggle()
         }
+    }
+    
+    func handleDrag(from fromIndex: Int, to toIndex: Int) {
+        let player = moves[fromIndex]
+        moves[fromIndex] = nil
+        moves[toIndex] = player
     }
     
     func resetGame() {
@@ -99,65 +106,66 @@ final class GameViewModel: ObservableObject {
         resetGame()
     }
     
-    func determineComputerMove(in moves: [String?]) -> Int {
-        var moveIndex = Int.random(in: 0..<8)
-        
-        let winPatterns: Set<Set<Int>> = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-                [0, 4, 8], [2, 4, 6]             // Diagonal
-            ]
+    func determineComputerMove(in moves: [String?], with gameType: GameType) -> Int {
+        var completingMoves: [Int] = []
         
         let computerPositions = moves.indices.filter { moves[$0] == "o" }
         
+        var availablePositions = moves.enumerated().compactMap { $0.element == nil ? $0.offset : nil }
+        
         // computer will win if it has the chance
-        for pattern in winPatterns {
+        for pattern in gameType.winPatterns {
             let winPositions = pattern.subtracting(computerPositions)
             
             if winPositions.count == 1 {
-                let isAvailable = moves[winPositions.first!] == nil
-                if isAvailable { return winPositions.first!}
+                if availablePositions.contains(winPositions.first!) && gameType != GameType.reverse { return winPositions.first!}
+                
+                if gameType == GameType.reverse {
+                    completingMoves.append(winPositions.first!)
+                }
             }
         }
         
-        let humanPositions = moves.indices.filter { moves[$0] == "x" }
-        
-        // computer will block if you are set up to win
-        for pattern in winPatterns {
-            let blockPositions = pattern.subtracting(humanPositions)
+        if gameType != GameType.reverse {
+            let humanPositions = moves.indices.filter { moves[$0] == "x" }
             
-            if blockPositions.count == 1 {
-                let isAvailable = moves[blockPositions.first!] == nil
-                if isAvailable { return blockPositions.first!}
+            // computer will block if you are set up to win
+            for pattern in gameType.winPatterns {
+                let blockPositions = pattern.subtracting(humanPositions)
+                
+                if blockPositions.count == 1 {
+                    if availablePositions.contains(blockPositions.first!) && gameType != GameType.reverse { return blockPositions.first!}
+                }
             }
         }
         
+        var moveIndex = availablePositions.randomElement()!
         
-        while moves[moveIndex] != nil {
-            moveIndex = Int.random(in: 0..<8)
+        if gameType != GameType.reverse { return moveIndex }
+        
+        while availablePositions.count > 1 {
+            if completingMoves.contains(moveIndex) {
+                availablePositions.removeAll { $0 == moveIndex }
+                moveIndex = availablePositions.randomElement()!
+            } else { return moveIndex }
         }
         
         return moveIndex
     }
     
-    func checkGridFilled(in moves: [String?]) -> Bool{
-        return !moves.contains(where: {$0 == nil})
+    func checkForDraw(in moves: [String?]) -> Bool {
+        return !moves.contains(where: { $0 == nil })
     }
     
-    func checkForWin(in moves: [String?]) -> Bool {
-        let winPatterns: [[Int]] = [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-                [0, 4, 8], [2, 4, 6]             // Diagonal
-            ]
-
-            for pattern in winPatterns {
-                let marks = pattern.map { moves[$0] }
-                if marks == ["x", "x", "x"] || marks == ["o", "o", "o"] {
-                    return true
-                }
+    func findWinner(in moves: [String?], with gameType: GameType) -> String? {
+        for pattern in gameType.winPatterns {
+            let marks = pattern.map { moves[$0] }
+            if marks == ["x", "x", "x"] {
+                return gameType == GameType.reverse ? "o" : "x"
+            } else if marks == ["o", "o", "o"] {
+                return gameType == GameType.reverse ? "x" : "o"
             }
-
-            return false
+        }
+        return nil
     }
 }

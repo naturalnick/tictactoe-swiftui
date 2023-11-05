@@ -14,6 +14,7 @@
 		015DB0A42ADCCB2200C28D3D /* ScoreCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015DB0A32ADCCB2200C28D3D /* ScoreCard.swift */; };
 		01B881322AC8E35100C5B02B /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B881312AC8E35100C5B02B /* GameViewModel.swift */; };
 		01B881342AC8E37A00C5B02B /* StatusLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B881332AC8E37A00C5B02B /* StatusLabel.swift */; };
+		01C3B4B82AF80BB5008ECA1B /* GameType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C3B4B72AF80BB5008ECA1B /* GameType.swift */; };
 		01EC324B2AC885350015041A /* TicTacToeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC324A2AC885350015041A /* TicTacToeApp.swift */; };
 		01EC324D2AC885350015041A /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01EC324C2AC885350015041A /* GameView.swift */; };
 		01EC324F2AC8853B0015041A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01EC324E2AC8853B0015041A /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 		01A150B32AC9A209002F5A95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01B881312AC8E35100C5B02B /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		01B881332AC8E37A00C5B02B /* StatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusLabel.swift; sourceTree = "<group>"; };
+		01C3B4B72AF80BB5008ECA1B /* GameType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameType.swift; sourceTree = "<group>"; };
 		01EC32472AC885350015041A /* TicTacToe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TicTacToe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		01EC324A2AC885350015041A /* TicTacToeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToeApp.swift; sourceTree = "<group>"; };
 		01EC324C2AC885350015041A /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 				01EC324E2AC8853B0015041A /* Assets.xcassets */,
 				01A150B32AC9A209002F5A95 /* Info.plist */,
 				01EC32502AC8853B0015041A /* Preview Content */,
+				01C3B4B72AF80BB5008ECA1B /* GameType.swift */,
 			);
 			path = TicTacToe;
 			sourceTree = "<group>";
@@ -175,6 +178,7 @@
 			files = (
 				015DB0A42ADCCB2200C28D3D /* ScoreCard.swift in Sources */,
 				014A19D32AC9FA7C0076CCFA /* TicTacToolbar.swift in Sources */,
+				01C3B4B82AF80BB5008ECA1B /* GameType.swift in Sources */,
 				01B881342AC8E37A00C5B02B /* StatusLabel.swift in Sources */,
 				01EC324D2AC885350015041A /* GameView.swift in Sources */,
 				014A19CF2AC9F9080076CCFA /* GameSpace.swift in Sources */,
@@ -316,10 +320,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TicTacToe/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -350,10 +356,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TicTacToe/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.puzzle-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
