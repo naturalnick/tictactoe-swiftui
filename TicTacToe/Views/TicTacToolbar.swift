@@ -12,8 +12,7 @@ struct TicTacToolbar: View {
     var toggleMultiplayerMode: () -> Void
     var resetGame: () -> Void
     var score: Int = 0
-    
-    @State var selectedGameType: GameType = GameType.classic
+    @Binding var selectedGameType: GameType
     
     var body: some View {
         VStack(spacing: 2) {
@@ -29,15 +28,16 @@ struct TicTacToolbar: View {
                 .padding(.leading)
                 
                 Spacer()
+                
                 Menu {
                     Picker("Tic Tac Toe Variants", selection: $selectedGameType) {
                         ForEach(GameType.allCases) { type in
-                            Text(type.rawValue.capitalized)
+                            Text(type.title)
                         }
                     }
                 } label: {
                     HStack {
-                        Text(selectedGameType.rawValue.capitalized)
+                        Text(selectedGameType.title)
                         Image(systemName: "chevron.up.chevron.down")
                     }
                     .foregroundStyle(.black)
@@ -60,13 +60,4 @@ struct TicTacToolbar: View {
         .background(.white)
         .shadow(color: Color.gray.opacity(0.3), radius: 5, x: 0, y: 5)
     }
-}
-
-enum GameType: String, CaseIterable, Identifiable {
-    case classic, reverse
-    var id: Self { self }
-}
-
-#Preview {
-    TicTacToolbar(multiplayerModeOn: false, toggleMultiplayerMode: { print("hello") }, resetGame: { print("hello") }, score: 1)
 }

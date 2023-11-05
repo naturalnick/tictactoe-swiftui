@@ -14,7 +14,7 @@ struct GameView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                TicTacToolbar(multiplayerModeOn: viewModel.multiplayerModeOn, toggleMultiplayerMode: viewModel.toggleMultiplayerMode, resetGame: viewModel.resetGame)
+                TicTacToolbar(multiplayerModeOn: viewModel.multiplayerModeOn, toggleMultiplayerMode: viewModel.toggleMultiplayerMode, resetGame: viewModel.resetGame, selectedGameType: $viewModel.selectedGameType)
                 
                 ZStack {
                     HStack {
@@ -41,7 +41,7 @@ struct GameView: View {
                 }
                 .padding()
                 
-                GameGrid(columns: viewModel.columns, moves: viewModel.moves, handlePlayerMove: viewModel.handlePlayerMove, winner: viewModel.winner, screenWidth: geometry.size.width)
+                GameGrid(moves: viewModel.moves, handlePlayerMove: viewModel.handlePlayerMove, handleDrag: viewModel.handleDrag, winner: viewModel.winner, screenWidth: geometry.size.width)
                 
                 Spacer()
                 
@@ -70,9 +70,12 @@ struct GameView: View {
                     .scaleEffect(viewModel.isResetButtonVisible ? 1 : 0, anchor: .bottom)
                 } else if !viewModel.isResetButtonVisible {
                     withAnimation(.easeInOut) {
-                        Text("Get 3 in a row to win!")
+                        Text(viewModel.selectedGameType.rules)
                             .font(.system(size: 21, weight: .semibold))
                             .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(4)
+                            .minimumScaleFactor(0.1)
                             .padding()
                     }
                 }
