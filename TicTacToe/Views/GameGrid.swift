@@ -8,22 +8,21 @@
 import SwiftUI
 
 struct GameGrid: View {
-    private let columns: [GridItem] = [GridItem(.flexible()),
-                               GridItem(.flexible()),
-                               GridItem(.flexible())]
-    var moves: [String?]
-    var handlePlayerMove: (Int) -> Void
-    var handleDrag: (Int, Int) -> Void
-    var winner: String?
+    @EnvironmentObject var viewModel: GameViewModel
     var screenWidth: CGFloat
+    
+    private let columns: [GridItem] = [GridItem(.flexible()),
+                                       GridItem(.flexible()),
+                                       GridItem(.flexible())]
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 0) {
             ForEach(0..<9) { i in
-                GameSpace(spaceIndex: i, screenWidth: screenWidth, handlePlayerMove: handlePlayerMove, handleDrag: handleDrag, moves: moves)
+                GameSpace(spaceIndex: i, screenWidth: screenWidth)
+                    .zIndex(viewModel.dragOriginIndex == i ? 2 : 1)
             }
         }
-        .disabled(winner != nil)
+        .disabled(viewModel.winner != nil)
         .padding(.horizontal, 10)
     }
 }
