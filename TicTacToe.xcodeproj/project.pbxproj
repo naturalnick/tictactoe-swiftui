@@ -82,12 +82,12 @@
 			children = (
 				01EC324C2AC885350015041A /* GameView.swift */,
 				01B881312AC8E35100C5B02B /* GameViewModel.swift */,
+				01C3B4B72AF80BB5008ECA1B /* GameType.swift */,
 				01B8812F2AC8E2FF00C5B02B /* Views */,
 				01EC324A2AC885350015041A /* TicTacToeApp.swift */,
 				01EC324E2AC8853B0015041A /* Assets.xcassets */,
 				01A150B32AC9A209002F5A95 /* Info.plist */,
 				01EC32502AC8853B0015041A /* Preview Content */,
-				01C3B4B72AF80BB5008ECA1B /* GameType.swift */,
 			);
 			path = TicTacToe;
 			sourceTree = "<group>";
