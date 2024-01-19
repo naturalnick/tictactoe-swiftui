@@ -8,19 +8,15 @@
 import SwiftUI
 
 struct TicTacToolbar: View {
-    var multiplayerModeOn: Bool
-    var toggleMultiplayerMode: () -> Void
-    var resetGame: () -> Void
-    var score: Int = 0
-    @Binding var selectedGameType: GameType
+    @EnvironmentObject var viewModel: GameViewModel
     
     var body: some View {
         VStack(spacing: 2) {
             HStack {
                 Button {
-                    toggleMultiplayerMode()
+                    viewModel.toggleMultiplayerMode()
                 } label: {
-                    Image(systemName: multiplayerModeOn ? "person.2.fill" : "person.fill")
+                    Image(systemName: viewModel.multiplayerModeOn ? "person.2.fill" : "person.fill")
                         .foregroundStyle(.black)
                         .font(.system(size: 26))
                         .frame(width: 60, height: 60)
@@ -30,14 +26,14 @@ struct TicTacToolbar: View {
                 Spacer()
                 
                 Menu {
-                    Picker("Tic Tac Toe Variants", selection: $selectedGameType) {
+                    Picker("Tic Tac Toe Variants", selection: $viewModel.selectedGameType) {
                         ForEach(GameType.allCases) { type in
                             Text(type.title)
                         }
                     }
                 } label: {
                     HStack {
-                        Text(selectedGameType.title)
+                        Text(viewModel.selectedGameType.title)
                         Image(systemName: "chevron.up.chevron.down")
                     }
                     .foregroundStyle(.black)
@@ -47,7 +43,7 @@ struct TicTacToolbar: View {
                 Spacer()
                 
                 Button {
-                    resetGame()
+                    viewModel.resetGame()
                 } label: {
                     Image(systemName: "arrow.counterclockwise")
                         .foregroundStyle(.black)

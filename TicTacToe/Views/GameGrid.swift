@@ -15,11 +15,13 @@ struct GameGrid: View {
                                        GridItem(.flexible()),
                                        GridItem(.flexible())]
     
+    
+    
     var body: some View {
         LazyVGrid(columns: columns, spacing: 0) {
             ForEach(0..<9) { i in
                 GameSpace(spaceIndex: i, screenWidth: screenWidth)
-                    .zIndex(viewModel.dragOriginIndex == i ? 2 : 1)
+                    .zIndex(viewModel.dragOriginIndex == i || viewModel.chooseIndex == i ? 2 : 1)
             }
         }
         .disabled(viewModel.winner != nil)

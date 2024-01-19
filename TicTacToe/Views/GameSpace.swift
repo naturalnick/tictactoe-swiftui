@@ -32,14 +32,24 @@ struct GameSpace: View {
     }
     
     var spaceColor: Color {
-        viewModel.isDragging && viewModel.validDragMoves.contains(spaceIndex) ?
+        viewModel.validDragMoves.contains(spaceIndex) ?
             .green : .white
     }
     
     var body: some View {
         ZStack {
             Button {
-                viewModel.handlePlayerMove(moveIndex: spaceIndex)
+                if viewModel.selectedGameType == .numerical { return }
+                
+                if viewModel.selectedGameType == .wild || viewModel.selectedGameType == .reverseWild {
+                    if spaceIndex == viewModel.chooseIndex {
+                        viewModel.chooseIndex = nil
+                    } else {
+                        viewModel.chooseIndex = spaceIndex
+                    }
+                } else {
+                    viewModel.handlePlayerMove(moveIndex: spaceIndex)
+                }
             } label: {
                 RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
                     .readRect { rect in
@@ -57,6 +67,10 @@ struct GameSpace: View {
             if let player = viewModel.moves[spaceIndex] {
                 MoveIndicator(player: player, spaceIndex: spaceIndex, spaceWidth: spaceWidth, gameType: viewModel.selectedGameType, isTurnX: viewModel.isTurnX)
             }
+            
+            if (viewModel.chooseIndex == spaceIndex) {
+                ChooseView(spaceIndex: spaceIndex ,spaceWidth: spaceWidth)
+            }
         }
         .frame(width: spaceWidth, height: spaceWidth)
     }
@@ -65,7 +79,7 @@ struct GameSpace: View {
 struct MoveIndicator: View {
     @EnvironmentObject var viewModel: GameViewModel
     
-    @State var position: CGPoint? = nil
+    @State var dragSize = CGSize(width: 0, height: 0)
     
     var player: String
     var spaceIndex: Int
@@ -73,55 +87,32 @@ struct MoveIndicator: View {
     var gameType: GameType
     var isTurnX: Bool
     
-    private var initialPosition: CGPoint {
-        CGPoint(x: spaceWidth / 2, y: spaceWidth / 2)
-    }
-    
-    func indexOfContainingRect(point: CGPoint, in rects: [CGRect?]) -> Int? {
-        for (index, rect) in rects.enumerated() {
-            if rect!.contains(point) {
-                return index
-            }
-        }
-        return nil
-    }
-    
     var body: some View {
         if gameType.moveable {
             Text(player.uppercased())
                 .font(.custom("Futura-Bold", size: spaceWidth/1.6))
                 .padding(.horizontal)
                 .animation(.easeIn, value: player)
-                .position(position ?? initialPosition)
-                .readRect(in: .local) { rect in
-                    position = CGPoint(x: rect.width / 2, y: rect.height / 2)
-                }
-                .gesture(
-                    DragGesture(coordinateSpace: .global)
-                        .onChanged({ value in
-                            if viewModel.isDragging && viewModel.dragOriginIndex != spaceIndex { return }
-                            
-                            viewModel.dragOriginIndex = spaceIndex
-                            viewModel.isDragging = true
-                            
-                            if position != nil {
-                                position?.x = initialPosition.x + value.translation.width
-                                position?.y = initialPosition.y + value.translation.height
-                            }
-                        })
+                .offset(dragSize)
+                .gesture([spaceIndex, nil].contains(viewModel.dragOriginIndex) ?
+                         DragGesture(coordinateSpace: .global)
+                    .onChanged({ value in
+                        viewModel.dragOriginIndex = spaceIndex
+                        
+                        dragSize = value.translation
+                    })
                         .onEnded({ value in
                             Task {
                                 if let dropIndex = indexOfContainingRect(point: value.location, in: viewModel.spaceRects), viewModel.dragValid(from: spaceIndex, to: dropIndex) {
                                     viewModel.handleDrag(from: spaceIndex, to: dropIndex)
                                 } else {
                                     await animate(duration: 0.3) {
-                                        position = initialPosition }
+                                        dragSize = CGSize(width: 0, height: 0) }
                                 }
                                 
-                                viewModel.isDragging = false
                                 viewModel.dragOriginIndex = nil
                             }
-                        }))
+                        }): nil)
         } else {
             Text(player.uppercased())
                 .font(.custom("Futura-Bold", size: spaceWidth/1.6))
@@ -141,11 +132,11 @@ struct RectPreferenceKey: PreferenceKey {
 }
 
 extension View {
-    func readRect(in coordinateSpace: CoordinateSpace = .global, onChange: @escaping (CGRect) -> Void) -> some View {
+    func readRect(onChange: @escaping (CGRect) -> Void) -> some View {
         background(
             GeometryReader { geometry in
                 Color.clear
-                    .preference(key: RectPreferenceKey.self, value: geometry.frame(in: coordinateSpace))
+                    .preference(key: RectPreferenceKey.self, value: geometry.frame(in: .global))
             }
         )
         .onPreferenceChange(RectPreferenceKey.self, perform: onChange)

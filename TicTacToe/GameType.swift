@@ -6,7 +6,7 @@
 //
 
 enum GameType: String, CaseIterable, Identifiable {
-    case classic, reverse, notakto, threeMensMorris, nineHoles, wild, reverseWild, numerical
+    case classic, reverse, threeMensMorris, nineHoles, wild, reverseWild, numerical
     
     var id: Self { self }
     
@@ -16,8 +16,6 @@ enum GameType: String, CaseIterable, Identifiable {
             return "Tic Tac Toe"
         case .reverse:
             return "Reverse Tic Tac Toe"
-        case .notakto:
-            return "Notakto"
         case .threeMensMorris:
             return "Three Men's Morris"
         case .nineHoles:
@@ -35,7 +33,7 @@ enum GameType: String, CaseIterable, Identifiable {
         switch self {
         case .classic, .threeMensMorris, .nineHoles, .wild:
             return "regular"
-        case .reverse, .reverseWild, .notakto:
+        case .reverse, .reverseWild:
             return "avoidance"
         case .numerical:
             return "sum15"
@@ -44,7 +42,7 @@ enum GameType: String, CaseIterable, Identifiable {
     
     var moveable: Bool {
         switch self {
-        case .classic, .reverse, .wild, .reverseWild, .numerical, .notakto:
+        case .classic, .reverse, .wild, .reverseWild, .numerical:
             return false
         case .threeMensMorris, .nineHoles:
             return true
@@ -53,7 +51,7 @@ enum GameType: String, CaseIterable, Identifiable {
     
     var threePieceLimit: Bool {
         switch self {
-        case .classic, .reverse, .wild, .reverseWild, .numerical, .notakto:
+        case .classic, .reverse, .wild, .reverseWild, .numerical:
             return false
         case .threeMensMorris, .nineHoles:
             return true
@@ -103,14 +101,12 @@ enum GameType: String, CaseIterable, Identifiable {
             return "Get 3 in a row to win!"
         case .reverse:
             return "Avoid 3 in a row!"
-        case .notakto:
-            return "Players use the same piece. \n Avoid 3 in a row!"
         case .threeMensMorris:
             return "Each player has 3 pieces. \n Pieces can be moved to adjacent free spaces once all pieces are down. \n Get 3 in a row to win!"
         case .nineHoles:
             return "Each player has 3 pieces. \n Pieces can be moved to free \n spaces once all pieces are down. \n Get 3 in a row to win! \n Diagonals do not count."
         case .wild:
-            return "Play either piece. \n Get 3 in a row to win!"
+            return "Play either piece. \n Get 3 in a row of any piece to win!"
         case .reverseWild:
             return "Play either piece. \n Avoid 3 in a row!"
         case .numerical:

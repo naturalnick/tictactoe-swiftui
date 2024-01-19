@@ -21,11 +21,14 @@ final class GameViewModel: ObservableObject {
     @Published var xPieceCount: Int = 3
     @Published var oPieceCount: Int = 3
     
-    @Published var isDragging = false
+    @Published var availableNumbers = (1...9).map { String($0) }
+    
+    @Published var chooseIndex: Int?
+    
     @Published var dragOriginIndex: Int?
     
     @Published var selectedGameType: GameType = GameType.classic {
-        didSet { if gameStarted { resetGame() } }
+        didSet { resetGame() }
     }
     
     @Published var isResetButtonVisible = false
@@ -45,20 +48,26 @@ final class GameViewModel: ObservableObject {
         if let dragOriginIndex {
             if (isTurnX && moves[dragOriginIndex] == "x" && xPieceCount == 0) || (!isTurnX && moves[dragOriginIndex] == "o" && oPieceCount == 0) {
                 
-                let validMoves = selectedGameType.validMoves![dragOriginIndex]
-                
-                return validMoves.filter { availablePositions.contains($0) }
+                if selectedGameType == .threeMensMorris {
+                    
+                    let validMoves = selectedGameType.validMoves![dragOriginIndex]
+                    
+                    return validMoves.filter { availablePositions.contains($0) }
+                } else if selectedGameType == .nineHoles {
+                    return availablePositions
+                }
             }
         }
         return []
     }
     
-    func handlePlayerMove(moveIndex: Int) {
+    func handlePlayerMove(moveIndex: Int, piece: String? = nil) {
         if moves[moveIndex] != nil { return }
         
         if !multiplayerModeOn && !isTurnX { return }
         
-        if selectedGameType.threePieceLimit {
+        switch selectedGameType {
+        case .threeMensMorris:
             if isTurnX && xPieceCount > 0 {
                 xPieceCount -= 1
                 moves[moveIndex] = "x"
@@ -66,7 +75,12 @@ final class GameViewModel: ObservableObject {
                 oPieceCount -= 1
                 moves[moveIndex] = "o"
             } else { return }
-        } else {
+        case .wild, .reverseWild:
+            moves[moveIndex] = piece!
+        case .numerical:
+            moves[moveIndex] = piece!
+            availableNumbers = availableNumbers.filter { $0 != piece }
+        default:
             moves[moveIndex] = isTurnX ? "x" : "o"
         }
         
@@ -88,7 +102,8 @@ final class GameViewModel: ObservableObject {
             
             if (isTurnX) { return }
             
-            if selectedGameType.threePieceLimit {
+            switch selectedGameType {
+            case .threeMensMorris, .nineHoles:
                 if oPieceCount > 0 {
                     oPieceCount -= 1
                     moves[computerMove.toIndex] = "o"
@@ -96,7 +111,13 @@ final class GameViewModel: ObservableObject {
                     moves[fromIndex] = nil
                     moves[computerMove.toIndex] = "o"
                 }
-            } else {
+            case .wild, .reverseWild:
+                moves[computerMove.toIndex] = ["x", "o"].randomElement()
+            case .numerical:
+                let computerNumber = availableNumbers.randomElement()
+                moves[computerMove.toIndex] = computerNumber
+                availableNumbers = availableNumbers.filter { $0 != computerNumber }
+            default:
                 moves[computerMove.toIndex] = "o"
             }
             
@@ -154,6 +175,10 @@ final class GameViewModel: ObservableObject {
         xPieceCount = 3
         oPieceCount = 3
         
+        chooseIndex = nil
+        
+        availableNumbers = (1...9).map { String($0) }
+        
         winner = nil
         moves = Array(repeating: nil, count: 9)
         isTurnX = true
@@ -189,7 +214,7 @@ final class GameViewModel: ObservableObject {
             }
         }
         
-        if gameType != .reverse {
+        if gameType != .reverse || gameType != .reverseWild {
             let humanPositions = moves.indices.filter { moves[$0] == "x" }
             
             // computer will block if you are set up to win
@@ -204,7 +229,7 @@ final class GameViewModel: ObservableObject {
         
         var moveIndex = availablePositions.randomElement()!
         
-        if gameType != .reverse { return Move(toIndex: moveIndex) }
+        if gameType != .reverse || gameType != .reverseWild { return Move(toIndex: moveIndex) }
         
         var remainingPositions: [Int] = availablePositions
         while remainingPositions.count > 1 {
@@ -222,12 +247,22 @@ final class GameViewModel: ObservableObject {
     }
     
     func findWinner(in moves: [String?], with gameType: GameType) -> String? {
-        for pattern in gameType.winPatterns {
-            let marks = pattern.map { moves[$0] }
-            if marks == ["x", "x", "x"] {
-                return gameType == .reverse ? "o" : "x"
-            } else if marks == ["o", "o", "o"] {
-                return gameType == .reverse ? "x" : "o"
+        switch selectedGameType {
+        case .numerical:
+            for pattern in gameType.winPatterns {
+                let numbers = pattern.compactMap { moves[$0].flatMap { Int($0) } }
+                if numbers.count == 3 && numbers.reduce(0, +) == 15 {
+                    return isTurnX ? "x" : "o"
+                }
+            }
+        default:
+            for pattern in gameType.winPatterns {
+                let marks = pattern.map { moves[$0] }
+                if marks == ["x", "x", "x"] {
+                    return gameType == .reverse ? "o" : "x"
+                } else if marks == ["o", "o", "o"] {
+                    return gameType == .reverse ? "x" : "o"
+                }
             }
         }
         return nil
