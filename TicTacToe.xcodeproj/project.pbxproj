@@ -12,6 +12,9 @@
 		014A19D32AC9FA7C0076CCFA /* TicTacToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */; };
 		015DB0A22ADCC98300C28D3D /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 015DB0A12ADCC98300C28D3D /* ConfettiSwiftUI */; };
 		015DB0A42ADCCB2200C28D3D /* ScoreCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015DB0A32ADCCB2200C28D3D /* ScoreCard.swift */; };
+		01B55FD92B02832E009CB6FE /* ChooseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B55FD82B02832E009CB6FE /* ChooseView.swift */; };
+		01B55FDB2B02A9E9009CB6FE /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B55FDA2B02A9E9009CB6FE /* Utils.swift */; };
+		01B55FDD2B02B7AF009CB6FE /* NumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B55FDC2B02B7AF009CB6FE /* NumberView.swift */; };
 		01B881322AC8E35100C5B02B /* GameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B881312AC8E35100C5B02B /* GameViewModel.swift */; };
 		01B881342AC8E37A00C5B02B /* StatusLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B881332AC8E37A00C5B02B /* StatusLabel.swift */; };
 		01C3B4B82AF80BB5008ECA1B /* GameType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C3B4B72AF80BB5008ECA1B /* GameType.swift */; };
@@ -27,6 +30,9 @@
 		014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToolbar.swift; sourceTree = "<group>"; };
 		015DB0A32ADCCB2200C28D3D /* ScoreCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreCard.swift; sourceTree = "<group>"; };
 		01A150B32AC9A209002F5A95 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		01B55FD82B02832E009CB6FE /* ChooseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseView.swift; sourceTree = "<group>"; };
+		01B55FDA2B02A9E9009CB6FE /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		01B55FDC2B02B7AF009CB6FE /* NumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberView.swift; sourceTree = "<group>"; };
 		01B881312AC8E35100C5B02B /* GameViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewModel.swift; sourceTree = "<group>"; };
 		01B881332AC8E37A00C5B02B /* StatusLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusLabel.swift; sourceTree = "<group>"; };
 		01C3B4B72AF80BB5008ECA1B /* GameType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameType.swift; sourceTree = "<group>"; };
@@ -57,6 +63,8 @@
 				014A19D02AC9FA240076CCFA /* GameGrid.swift */,
 				014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */,
 				015DB0A32ADCCB2200C28D3D /* ScoreCard.swift */,
+				01B55FD82B02832E009CB6FE /* ChooseView.swift */,
+				01B55FDC2B02B7AF009CB6FE /* NumberView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -88,6 +96,7 @@
 				01EC324E2AC8853B0015041A /* Assets.xcassets */,
 				01A150B32AC9A209002F5A95 /* Info.plist */,
 				01EC32502AC8853B0015041A /* Preview Content */,
+				01B55FDA2B02A9E9009CB6FE /* Utils.swift */,
 			);
 			path = TicTacToe;
 			sourceTree = "<group>";
@@ -179,12 +188,15 @@
 				015DB0A42ADCCB2200C28D3D /* ScoreCard.swift in Sources */,
 				014A19D32AC9FA7C0076CCFA /* TicTacToolbar.swift in Sources */,
 				01C3B4B82AF80BB5008ECA1B /* GameType.swift in Sources */,
+				01B55FD92B02832E009CB6FE /* ChooseView.swift in Sources */,
 				01B881342AC8E37A00C5B02B /* StatusLabel.swift in Sources */,
 				01EC324D2AC885350015041A /* GameView.swift in Sources */,
 				014A19CF2AC9F9080076CCFA /* GameSpace.swift in Sources */,
+				01B55FDB2B02A9E9009CB6FE /* Utils.swift in Sources */,
 				014A19D12AC9FA240076CCFA /* GameGrid.swift in Sources */,
 				01B881322AC8E35100C5B02B /* GameViewModel.swift in Sources */,
 				01EC324B2AC885350015041A /* TicTacToeApp.swift in Sources */,
+				01B55FDD2B02B7AF009CB6FE /* NumberView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
