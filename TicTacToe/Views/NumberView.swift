@@ -29,12 +29,7 @@ struct NumberView: View {
                         .onChanged({ value in
                             dragNumber = Int(numText)
                             let translation = value.translation
-                            dragOffset = CGSize(width: translation.width + 30, height: translation.height)
-                            
-                            if let dropIndex = indexOfContainingRect(point: value.location, in: viewModel.spaceRects), viewModel.moves[dropIndex] == nil {
-                                print(dropIndex, value.location)
-                                print(viewModel.spaceRects[0]!)
-                            }
+                            dragOffset = CGSize(width: translation.width, height: translation.height)
                         })
                             .onEnded({ value in
                                 Task {
