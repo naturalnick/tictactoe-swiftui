@@ -25,12 +25,7 @@ struct GameSpace: View {
     @EnvironmentObject var viewModel: GameViewModel
     
     var spaceIndex: Int
-    var screenWidth: CGFloat
-    
-    var spaceWidth: CGFloat {
-        return (screenWidth - 20) / 3
-    }
-    
+    var spaceWidth: CGFloat
     var spaceColor: Color {
         viewModel.validDragMoves.contains(spaceIndex) ?
             .green : .white
@@ -41,7 +36,7 @@ struct GameSpace: View {
             Button {
                 if viewModel.selectedGameType == .numerical { return }
                 
-                if viewModel.selectedGameType == .wild || viewModel.selectedGameType == .reverseWild {
+                if viewModel.selectedGameType == .wild {
                     if spaceIndex == viewModel.chooseIndex {
                         viewModel.chooseIndex = nil
                     } else {
@@ -66,57 +61,15 @@ struct GameSpace: View {
             
             if let player = viewModel.moves[spaceIndex] {
                 MoveIndicator(player: player, spaceIndex: spaceIndex, spaceWidth: spaceWidth, gameType: viewModel.selectedGameType, isTurnX: viewModel.isTurnX)
+                    .environmentObject(viewModel)
             }
             
-            if (viewModel.chooseIndex == spaceIndex) {
-                ChooseView(spaceIndex: spaceIndex ,spaceWidth: spaceWidth)
-            }
+//            if (viewModel.chooseIndex == spaceIndex) {
+//                ChooseView(spaceIndex: spaceIndex ,spaceWidth: spaceWidth)
+//            }
         }
         .frame(width: spaceWidth, height: spaceWidth)
-    }
-}
-
-struct MoveIndicator: View {
-    @EnvironmentObject var viewModel: GameViewModel
-    
-    @State var dragSize = CGSize(width: 0, height: 0)
-    
-    var player: String
-    var spaceIndex: Int
-    var spaceWidth: CGFloat
-    var gameType: GameType
-    var isTurnX: Bool
-    
-    var body: some View {
-        if gameType.moveable {
-            Text(player.uppercased())
-                .font(.custom("Futura-Bold", size: spaceWidth/1.6))
-                .padding(.horizontal)
-                .animation(.easeIn, value: player)
-                .offset(dragSize)
-                .gesture([spaceIndex, nil].contains(viewModel.dragOriginIndex) ?
-                         DragGesture(coordinateSpace: .global)
-                    .onChanged({ value in
-                        viewModel.dragOriginIndex = spaceIndex
-                        
-                        dragSize = value.translation
-                    })
-                        .onEnded({ value in
-                            Task {
-                                if let dropIndex = indexOfContainingRect(point: value.location, in: viewModel.spaceRects), viewModel.dragValid(from: spaceIndex, to: dropIndex) {
-                                    viewModel.handleDrag(from: spaceIndex, to: dropIndex)
-                                } else {
-                                    await animate(duration: 0.3) {
-                                        dragSize = CGSize(width: 0, height: 0) }
-                                }
-                                
-                                viewModel.dragOriginIndex = nil
-                            }
-                        }): nil)
-        } else {
-            Text(player.uppercased())
-                .font(.custom("Futura-Bold", size: spaceWidth/1.6))
-        }
+        .zIndex((viewModel.dragOriginIndex ?? -1) == spaceIndex ? 2 : 1)
     }
 }
 
@@ -140,17 +93,5 @@ extension View {
             }
         )
         .onPreferenceChange(RectPreferenceKey.self, perform: onChange)
-    }
-    
-    func animate(duration: CGFloat, _ execute: @escaping () -> Void) async {
-        await withCheckedContinuation { continuation in
-            withAnimation(.easeInOut(duration: duration)) {
-                execute()
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                continuation.resume()
-            }
-        }
     }
 }

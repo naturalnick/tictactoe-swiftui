@@ -6,7 +6,7 @@
 //
 
 enum GameType: String, CaseIterable, Identifiable {
-    case classic, reverse, threeMensMorris, nineHoles, wild, reverseWild, numerical
+    case classic, reverse, threeMensMorris, nineHoles, wild, numerical
     
     var id: Self { self }
     
@@ -22,27 +22,14 @@ enum GameType: String, CaseIterable, Identifiable {
             return "Nine Holes"
         case .wild:
             return "Wild"
-        case .reverseWild:
-            return "Reverse Wild"
         case .numerical:
             return "Numerical"
         }
     }
     
-    var strategy: String {
-        switch self {
-        case .classic, .threeMensMorris, .nineHoles, .wild:
-            return "regular"
-        case .reverse, .reverseWild:
-            return "avoidance"
-        case .numerical:
-            return "sum15"
-        }
-    }
-    
     var moveable: Bool {
         switch self {
-        case .classic, .reverse, .wild, .reverseWild, .numerical:
+        case .classic, .reverse, .wild, .numerical:
             return false
         case .threeMensMorris, .nineHoles:
             return true
@@ -51,7 +38,7 @@ enum GameType: String, CaseIterable, Identifiable {
     
     var threePieceLimit: Bool {
         switch self {
-        case .classic, .reverse, .wild, .reverseWild, .numerical:
+        case .classic, .reverse, .wild, .numerical:
             return false
         case .threeMensMorris, .nineHoles:
             return true
@@ -78,23 +65,6 @@ enum GameType: String, CaseIterable, Identifiable {
         }
     }
     
-    var winPatterns: Set<Set<Int>> {
-        switch self {
-        case .classic:
-            return [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-                [0, 4, 8], [2, 4, 6]             // Diagonal
-            ]
-        default: // classic winning moves
-            return [
-                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
-                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
-                [0, 4, 8], [2, 4, 6]             // Diagonal
-            ]
-        }
-    }
-    
     var rules: String {
         switch self {
         case .classic:
@@ -107,8 +77,6 @@ enum GameType: String, CaseIterable, Identifiable {
             return "Each player has 3 pieces. \n Pieces can be moved to free \n spaces once all pieces are down. \n Get 3 in a row to win! \n Diagonals do not count."
         case .wild:
             return "Play either piece. \n Get 3 in a row of any piece to win!"
-        case .reverseWild:
-            return "Play either piece. \n Avoid 3 in a row!"
         case .numerical:
             return "Play numbers 1 - 9. \n Get 3 in a row with sum of 15 to win!"
         }
