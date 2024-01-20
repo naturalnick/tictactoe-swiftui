@@ -42,7 +42,8 @@ struct NumberView: View {
                                         viewModel.handlePlayerMove(moveIndex: dropIndex, piece: "\(numText)")
                                     } else {
                                         await animate(duration: 0.3) {
-                                            dragOffset = CGSize(width: 0, height: 0) }
+                                            dragOffset = CGSize(width: 0, height: 0)
+                                        }
                                     }
                                 }
                                 

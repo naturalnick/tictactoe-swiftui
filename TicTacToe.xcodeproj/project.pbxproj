@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		013516D82B5B4B2600DD082F /* MoveIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013516D72B5B4B2600DD082F /* MoveIndicator.swift */; };
 		014A19CF2AC9F9080076CCFA /* GameSpace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A19CE2AC9F9070076CCFA /* GameSpace.swift */; };
 		014A19D12AC9FA240076CCFA /* GameGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A19D02AC9FA240076CCFA /* GameGrid.swift */; };
 		014A19D32AC9FA7C0076CCFA /* TicTacToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */; };
@@ -25,6 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		013516D72B5B4B2600DD082F /* MoveIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveIndicator.swift; sourceTree = "<group>"; };
 		014A19CE2AC9F9070076CCFA /* GameSpace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSpace.swift; sourceTree = "<group>"; };
 		014A19D02AC9FA240076CCFA /* GameGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameGrid.swift; sourceTree = "<group>"; };
 		014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToolbar.swift; sourceTree = "<group>"; };
@@ -60,6 +62,7 @@
 			children = (
 				01B881332AC8E37A00C5B02B /* StatusLabel.swift */,
 				014A19CE2AC9F9070076CCFA /* GameSpace.swift */,
+				013516D72B5B4B2600DD082F /* MoveIndicator.swift */,
 				014A19D02AC9FA240076CCFA /* GameGrid.swift */,
 				014A19D22AC9FA7C0076CCFA /* TicTacToolbar.swift */,
 				015DB0A32ADCCB2200C28D3D /* ScoreCard.swift */,
@@ -140,7 +143,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					01EC32462AC885350015041A = {
 						CreatedOnToolsVersion = 14.2;
@@ -185,6 +188,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				013516D82B5B4B2600DD082F /* MoveIndicator.swift in Sources */,
 				015DB0A42ADCCB2200C28D3D /* ScoreCard.swift in Sources */,
 				014A19D32AC9FA7C0076CCFA /* TicTacToolbar.swift in Sources */,
 				01C3B4B82AF80BB5008ECA1B /* GameType.swift in Sources */,
@@ -207,6 +211,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -268,6 +273,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";

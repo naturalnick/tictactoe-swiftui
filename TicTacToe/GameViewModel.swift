@@ -33,6 +33,12 @@ final class GameViewModel: ObservableObject {
     
     @Published var isResetButtonVisible = false
     
+    let winPatterns: [[Int]] = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Horizontal
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Vertical
+        [0, 4, 8], [2, 4, 6]             // Diagonal
+    ]
+    
     var scoreTotal: Int { xScore + oScore }
     
     var roundStarted: Bool { xScore + oScore > 0 }
@@ -46,8 +52,8 @@ final class GameViewModel: ObservableObject {
     
     var validDragMoves: [Int] {
         if let dragOriginIndex {
+            print((isTurnX, moves[dragOriginIndex] == "x", xPieceCount == 0))
             if (isTurnX && moves[dragOriginIndex] == "x" && xPieceCount == 0) || (!isTurnX && moves[dragOriginIndex] == "o" && oPieceCount == 0) {
-                
                 if selectedGameType == .threeMensMorris {
                     
                     let validMoves = selectedGameType.validMoves![dragOriginIndex]
@@ -67,7 +73,7 @@ final class GameViewModel: ObservableObject {
         if !multiplayerModeOn && !isTurnX { return }
         
         switch selectedGameType {
-        case .threeMensMorris:
+        case .threeMensMorris, .nineHoles:
             if isTurnX && xPieceCount > 0 {
                 xPieceCount -= 1
                 moves[moveIndex] = "x"
@@ -75,7 +81,7 @@ final class GameViewModel: ObservableObject {
                 oPieceCount -= 1
                 moves[moveIndex] = "o"
             } else { return }
-        case .wild, .reverseWild:
+        case .wild:
             moves[moveIndex] = piece!
         case .numerical:
             moves[moveIndex] = piece!
@@ -111,7 +117,7 @@ final class GameViewModel: ObservableObject {
                     moves[fromIndex] = nil
                     moves[computerMove.toIndex] = "o"
                 }
-            case .wild, .reverseWild:
+            case .wild:
                 moves[computerMove.toIndex] = ["x", "o"].randomElement()
             case .numerical:
                 let computerNumber = availableNumbers.randomElement()
@@ -135,8 +141,6 @@ final class GameViewModel: ObservableObject {
         if selectedGameType.moveable && moves[toIndex] == nil {
             if isTurnX && moves[fromIndex] != "x" { return }
             if !isTurnX && moves[fromIndex] != "o" { return }
-            
-            if selectedGameType == .threeMensMorris && !selectedGameType.validMoves![fromIndex].contains(toIndex) { return }
             
             let player = moves[fromIndex]
             moves[fromIndex] = nil
@@ -190,56 +194,78 @@ final class GameViewModel: ObservableObject {
     }
     
     func determineComputerMove(in moves: [String?], with gameType: GameType) -> Move {
-        var completingMoves: [Int] = []
-        
         let computerPositions = moves.indices.filter { moves[$0] == "o" }
         
         if gameType.threePieceLimit && oPieceCount == 0 {
-            let fromIndex = computerPositions.randomElement()
-            let toIndex = availablePositions.randomElement()!
+            var fromIndex = computerPositions.randomElement()
+            var toIndex: Int? = availablePositions.randomElement()!
             
-            return Move(fromIndex: fromIndex, toIndex: toIndex)
-        }
-        
-        // computer will win if it has the chance
-        for pattern in gameType.winPatterns {
-            let winPositions = pattern.subtracting(computerPositions)
-            
-            if winPositions.count == 1 {
-                if availablePositions.contains(winPositions.first!) && gameType != .reverse { return Move(toIndex: winPositions.first!) }
-                
-                if gameType == .reverse {
-                    completingMoves.append(winPositions.first!)
+            if gameType == .threeMensMorris {
+                toIndex = nil
+                while (toIndex == nil) {
+                    let validMovesFromIndex = gameType.validMoves![fromIndex!]
+                    let availableValidMoves = availablePositions.filter { validMovesFromIndex.contains($0) }
+                    
+                    if availableValidMoves.count > 0 {
+                        toIndex = availableValidMoves.randomElement()!
+                    }
+                        
+                    fromIndex = computerPositions.randomElement()
                 }
             }
+            
+            return Move(fromIndex: fromIndex, toIndex: toIndex!)
+        }
+
+        let winPositions = getWinPositions(currentPositions: computerPositions)
+            
+        if gameType == .reverse {
+            let reversePositions = getReversePositions(winPositions: winPositions)
+            return Move(toIndex: reversePositions.randomElement()!)
         }
         
-        if gameType != .reverse || gameType != .reverseWild {
-            let humanPositions = moves.indices.filter { moves[$0] == "x" }
+        if winPositions.count > 0 { return Move(toIndex: winPositions.randomElement()!) }
+        
+        let blockPositions = getBlockPositions(moves: moves)
+        if blockPositions.count > 0 { return Move(toIndex: blockPositions.randomElement()!) }
+        
+        let randomMoveIndex = availablePositions.randomElement()!
+        return Move(toIndex: randomMoveIndex)
+    }
+    
+    func getWinPositions(currentPositions: [Int]) -> [Int] {
+        var winPositions: [Int] = []
+        for pattern in winPatterns {
+            let positions = pattern.filter { !currentPositions.contains($0) }
             
-            // computer will block if you are set up to win
-            for pattern in gameType.winPatterns {
-                let blockPositions = pattern.subtracting(humanPositions)
-                
-                if blockPositions.count == 1 {
-                    if availablePositions.contains(blockPositions.first!) && gameType != .reverse { return Move(toIndex: blockPositions.first!) }
-                }
+            if positions.count == 1 && availablePositions.contains(positions.first!) {
+                 winPositions.append(positions.first!)
             }
         }
-        
-        var moveIndex = availablePositions.randomElement()!
-        
-        if gameType != .reverse || gameType != .reverseWild { return Move(toIndex: moveIndex) }
-        
-        var remainingPositions: [Int] = availablePositions
-        while remainingPositions.count > 1 {
-            if completingMoves.contains(moveIndex) {
-                remainingPositions.removeAll { $0 == moveIndex }
-                moveIndex = remainingPositions.randomElement()!
-            } else { return Move(toIndex: moveIndex) }
+        return winPositions
+    }
+    
+    func getBlockPositions(moves: [String?]) -> [Int] {
+        let humanPositions = moves.indices.filter { moves[$0] == "x" }
+        var blockPositions: [Int] = []
+        for pattern in winPatterns {
+            let positions = pattern.filter { !humanPositions.contains($0) }
+            
+            if positions.count == 1 && availablePositions.contains(positions.first!) {
+                blockPositions.append(positions.first!)
+            }
         }
-        
-        return Move(toIndex: moveIndex)
+        return blockPositions
+    }
+    
+    func getReversePositions(winPositions: [Int]) -> [Int] {
+        var reversePositions: [Int] = []
+        for num in 0...8 {
+            if !winPositions.contains(num) && availablePositions.contains(num) {
+                reversePositions.append(num)
+            }
+        }
+        return reversePositions
     }
     
     func checkForDraw(in moves: [String?]) -> Bool {
@@ -249,14 +275,14 @@ final class GameViewModel: ObservableObject {
     func findWinner(in moves: [String?], with gameType: GameType) -> String? {
         switch selectedGameType {
         case .numerical:
-            for pattern in gameType.winPatterns {
+            for pattern in winPatterns {
                 let numbers = pattern.compactMap { moves[$0].flatMap { Int($0) } }
                 if numbers.count == 3 && numbers.reduce(0, +) == 15 {
                     return isTurnX ? "x" : "o"
                 }
             }
         default:
-            for pattern in gameType.winPatterns {
+            for pattern in winPatterns {
                 let marks = pattern.map { moves[$0] }
                 if marks == ["x", "x", "x"] {
                     return gameType == .reverse ? "o" : "x"
