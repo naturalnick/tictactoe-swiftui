@@ -48,9 +48,7 @@ struct GameSpace: View {
             } label: {
                 RoundedRectangle(cornerSize: CGSize(width: 10, height: 10))
                     .readRect { rect in
-                        if viewModel.spaceRects[spaceIndex] == nil {
-                            viewModel.spaceRects[spaceIndex] = rect
-                        }
+                        viewModel.spaceRects[spaceIndex] = rect
                     }
                     .padding(.all, 5)
                     .foregroundStyle(spaceColor)
@@ -64,12 +62,12 @@ struct GameSpace: View {
                     .environmentObject(viewModel)
             }
             
-//            if (viewModel.chooseIndex == spaceIndex) {
-//                ChooseView(spaceIndex: spaceIndex ,spaceWidth: spaceWidth)
-//            }
+            if (viewModel.chooseIndex == spaceIndex) {
+                ChooseView(spaceIndex: spaceIndex ,spaceWidth: spaceWidth)
+            }
         }
         .frame(width: spaceWidth, height: spaceWidth)
-        .zIndex((viewModel.dragOriginIndex ?? -1) == spaceIndex ? 2 : 1)
+        .zIndex((viewModel.dragOriginIndex ?? -1) == spaceIndex || (viewModel.chooseIndex ?? -1) == spaceIndex ? 2 : 1)
     }
 }
 
@@ -90,6 +88,9 @@ extension View {
             GeometryReader { geometry in
                 Color.clear
                     .preference(key: RectPreferenceKey.self, value: geometry.frame(in: .global))
+                    .onAppear {
+                        print(geometry.safeAreaInsets)
+                    }
             }
         )
         .onPreferenceChange(RectPreferenceKey.self, perform: onChange)

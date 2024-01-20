@@ -23,6 +23,10 @@ struct GameGrid: View {
         if let dragOriginIndex = viewModel.dragOriginIndex {
             return range.contains(dragOriginIndex) ? 2 : 1
         }
+        if let chooseIndex = viewModel.chooseIndex {
+            return range.contains(chooseIndex) ? 2 : 1
+        }
+        
         return 0
     }
     
